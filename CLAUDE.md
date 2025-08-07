@@ -140,3 +140,10 @@ if err != nil {
     return
 }
 ```
+
+## Development Best Practices
+
+### Git Workflow
+- Work in branches, create PRs, commit often
+- Run tests before committing
+- Update PR summary after pushing additional commits to PR
