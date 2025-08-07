@@ -43,7 +43,7 @@ checksum:
 
 release:
   github:
-    owner: codematters-llc
+    owner: uptime-monitor-io
     name: terraform-provider-uptime
   draft: false
   prerelease: auto
