@@ -102,8 +102,9 @@ changelog:
     - title: 'Other Changes'
       order: 999
 
-sboms:
-  - artifacts: archive
+# SBOM generation disabled - syft not available in CI
+# sboms:
+#   - artifacts: archive
 
 dockers:
   - image_templates:
