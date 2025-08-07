@@ -139,7 +139,7 @@ jobs:
         run: go install github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs@latest
       
       - name: Generate documentation
-        run: tfplugindocs generate
+        run: tfplugindocs generate --provider-name uptime
       
       - name: Check for uncommitted documentation changes
         run: |
