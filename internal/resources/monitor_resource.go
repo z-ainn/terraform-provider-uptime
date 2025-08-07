@@ -671,10 +671,7 @@ func (r *MonitorResource) apiModelToTerraformModel(ctx context.Context, monitor 
 	} else if monitor.Settings.Ping != nil {
 		data.Type = types.StringValue("ping")
 		// Strip ping:// prefix for Terraform state consistency
-		pingURL := monitor.Settings.Ping.URL
-		if strings.HasPrefix(pingURL, "ping://") {
-			pingURL = strings.TrimPrefix(pingURL, "ping://")
-		}
+		pingURL := strings.TrimPrefix(monitor.Settings.Ping.URL, "ping://")
 		data.URL = types.StringValue(pingURL)
 	} else {
 		return fmt.Errorf("monitor has no recognized settings type")

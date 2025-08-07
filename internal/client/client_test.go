@@ -91,7 +91,9 @@ func TestClient_CreateMonitor(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			t.Errorf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -148,7 +150,9 @@ func TestClient_GetMonitor(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			t.Errorf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -199,7 +203,9 @@ func TestClient_UpdateMonitor(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			t.Errorf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -239,7 +245,9 @@ func TestClient_DeleteMonitor(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			t.Errorf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -299,7 +307,9 @@ func TestClient_ErrorHandling(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.statusCode)
-				json.NewEncoder(w).Encode(tt.response)
+				if err := json.NewEncoder(w).Encode(tt.response); err != nil {
+					t.Errorf("Failed to encode response: %v", err)
+				}
 			}))
 			defer server.Close()
 
@@ -359,7 +369,9 @@ func TestClient_GetAccount(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			t.Errorf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -392,7 +404,9 @@ func TestClient_GetAccount_Error(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(401)
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			t.Errorf("Failed to encode response: %v", err)
+		}
 	}))
 	defer server.Close()
 
