@@ -32,7 +32,7 @@ Create a `.terraformrc` file in your project directory:
 cat > .terraformrc << 'EOF'
 provider_installation {
   dev_overrides {
-    "codematters-llc/uptime" = "/path/to/uptime/terraform-provider"
+    "uptime-monitor-io/uptime" = "/path/to/uptime/terraform-provider"
   }
   direct {}
 }
@@ -57,7 +57,7 @@ Create `main.tf`:
 terraform {
   required_providers {
     uptime = {
-      source = "codematters-llc/uptime"
+      source = "uptime-monitor-io/uptime"
       version = "0.1.0"
     }
   }

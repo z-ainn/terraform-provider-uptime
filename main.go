@@ -36,7 +36,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/codematters-llc/uptime",
+		Address: "registry.terraform.io/uptime-monitor-io/uptime",
 		Debug:   debug,
 	}
 

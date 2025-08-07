@@ -15,7 +15,7 @@ The Uptime Monitor provider allows you to manage monitors, contacts, and status 
 terraform {
   required_providers {
     uptime = {
-      source = "registry.terraform.io/codematters-llc/uptime"
+      source = "registry.terraform.io/uptime-monitor-io/uptime"
     }
   }
 }

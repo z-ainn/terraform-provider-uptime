@@ -13,7 +13,7 @@ This is a private Terraform provider for managing Uptime Monitor resources.
    ```hcl
    provider_installation {
      dev_overrides {
-       "codematters-llc/uptime" = "/path/to/terraform-provider"
+       "uptime-monitor-io/uptime" = "/path/to/terraform-provider"
      }
      direct {}
    }

@@ -73,7 +73,7 @@ release:
     terraform {
       required_providers {
         uptime = {
-          source  = "codematters-llc/uptime"
+          source  = "uptime-monitor-io/uptime"
           version = "{{ .Version }}"
         }
       }

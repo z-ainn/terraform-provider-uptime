@@ -227,7 +227,7 @@ data "uptime_status_page" "existing" {
 terraform {
   required_providers {
     uptime = {
-      source  = "codematters-llc/uptime"
+      source  = "uptime-monitor-io/uptime"
       version = "~> 1.0"
     }
   }
