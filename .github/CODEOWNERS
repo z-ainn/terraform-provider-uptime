@@ -1,0 +1,17 @@
+# Default code owners for all files
+* @lazureykis
+
+# Terraform provider specific files
+*.tf @lazureykis
+*.hcl @lazureykis
+/examples/ @lazureykis
+/docs/ @lazureykis
+
+# Go source files
+*.go @lazureykis
+go.mod @lazureykis
+go.sum @lazureykis
+
+# GitHub Actions workflows
+/.github/workflows/ @lazureykis
+/.github/ @lazureykis

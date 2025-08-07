@@ -73,7 +73,7 @@ func (p *UptimeProvider) Configure(ctx context.Context, req provider.ConfigureRe
 	if baseUrl == "" {
 		baseUrl = os.Getenv("UPTIME_BASE_URL")
 		if baseUrl == "" {
-			baseUrl = "https://uptime-monitor.io" // Default to production
+			baseUrl = "https://api.uptime-monitor.io" // Default to production API
 		}
 	}
 

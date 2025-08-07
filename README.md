@@ -1,6 +1,12 @@
 # Terraform Provider for Uptime Monitor
 
-A private Terraform provider for managing uptime monitors through the Uptime Monitor API.
+[![CI](https://github.com/codematters-llc/uptime-monitor-io-terraform-provider/actions/workflows/ci.yml/badge.svg)](https://github.com/codematters-llc/uptime-monitor-io-terraform-provider/actions/workflows/ci.yml)
+[![Release](https://github.com/codematters-llc/uptime-monitor-io-terraform-provider/actions/workflows/release.yml/badge.svg)](https://github.com/codematters-llc/uptime-monitor-io-terraform-provider/actions/workflows/release.yml)
+[![Documentation](https://github.com/codematters-llc/uptime-monitor-io-terraform-provider/actions/workflows/docs.yml/badge.svg)](https://github.com/codematters-llc/uptime-monitor-io-terraform-provider/actions/workflows/docs.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/codematters-llc/uptime-monitor-io-terraform-provider)](https://goreportcard.com/report/github.com/codematters-llc/uptime-monitor-io-terraform-provider)
+[![License](https://img.shields.io/github/license/codematters-llc/uptime-monitor-io-terraform-provider)](https://github.com/codematters-llc/uptime-monitor-io-terraform-provider/blob/main/LICENSE)
+
+A Terraform provider for managing uptime monitors through the Uptime Monitor API.
 
 ## Features
 
@@ -51,7 +57,7 @@ Distribute the appropriate binary to your users along with installation instruct
 ```hcl
 provider "uptime" {
   api_key  = "your-api-key-here"
-  base_url = "https://api.uptime-monitor.io"  # Optional, defaults to localhost:8000
+  base_url = "https://api.uptime-monitor.io"  # Optional, defaults to https://api.uptime-monitor.io
 }
 ```
 

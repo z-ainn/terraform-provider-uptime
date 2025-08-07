@@ -1,0 +1,148 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}'
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm64
+      - goos: windows
+        goarch: arm
+    binary: '{{ .ProjectName }}_v{{ .Version }}'
+
+archives:
+  - format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  algorithm: sha256
+
+signs:
+  - artifacts: checksum
+    args:
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+
+release:
+  github:
+    owner: codematters-llc
+    name: uptime-monitor-io-terraform-provider
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"
+  
+  header: |
+    ## What's Changed
+    
+  footer: |
+    ## Docker Images
+    
+    ```bash
+    docker pull ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}
+    ```
+    
+    ## Terraform Configuration
+    
+    ```hcl
+    terraform {
+      required_providers {
+        uptime = {
+          source  = "codematters-llc/uptime"
+          version = "{{ .Version }}"
+        }
+      }
+    }
+    ```
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+      - '^build:'
+      - '^style:'
+      - '^refactor:'
+      - '^perf:'
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: 'Features'
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Breaking Changes'
+      regexp: '^.*?!:.+$'
+      order: 2
+    - title: 'Documentation'
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: 'Other Changes'
+      order: 999
+
+sboms:
+  - artifacts: archive
+
+dockers:
+  - image_templates:
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-amd64"
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-amd64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+  
+  - image_templates:
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-arm64"
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-arm64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+
+docker_manifests:
+  - name_template: "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}"
+    image_templates:
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-amd64"
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-arm64"
+  
+  - name_template: "ghcr.io/codematters-llc/terraform-provider-uptime:latest"
+    image_templates:
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-amd64"
+      - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-arm64"
