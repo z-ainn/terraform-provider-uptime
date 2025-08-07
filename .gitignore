@@ -1,0 +1,43 @@
+# Binaries
+terraform-provider-uptime
+*.exe
+
+# Test configurations and state files
+terraform-config/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+
+# Go build artifacts
+*.test
+*.out
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.auto.tfvars
+
+# Test output
+coverage.txt
+coverage.html
+*.prof
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.log
