@@ -26,7 +26,7 @@ func (c *Client) CreateStatusPage(req CreateStatusPageRequest) (*StatusPage, err
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var apiResp StatusPageResponse
 	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
@@ -63,7 +63,7 @@ func (c *Client) GetStatusPage(id string) (*StatusPage, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, fmt.Errorf("status page not found")
@@ -110,7 +110,7 @@ func (c *Client) UpdateStatusPage(id string, req UpdateStatusPageRequest) (*Stat
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var apiResp StatusPageResponse
 	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
@@ -147,7 +147,7 @@ func (c *Client) DeleteStatusPage(id string) error {
 	if err != nil {
 		return fmt.Errorf("failed to make request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
 		var apiResp StatusPageResponse
@@ -178,7 +178,7 @@ func (c *Client) ListStatusPages() ([]StatusPage, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var apiResp ListStatusPagesResponse
 	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {

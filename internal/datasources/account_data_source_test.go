@@ -102,6 +102,5 @@ func TestAccountDataSource_NewDataSource(t *testing.T) {
 	dataSource := NewAccountDataSource()
 	assert.NotNil(t, dataSource)
 
-	// Verify it implements the DataSource interface
-	var _ datasource.DataSource = dataSource
+	// The compiler already verifies it implements the DataSource interface
 }

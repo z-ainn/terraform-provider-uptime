@@ -62,7 +62,7 @@ func (c *Client) checkResponse(resp *http.Response) error {
 		return nil
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("HTTP %d: failed to read error response", resp.StatusCode)

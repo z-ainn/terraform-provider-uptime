@@ -13,7 +13,7 @@ func (c *Client) CreateMonitor(req CreateMonitorRequest) (*Monitor, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create monitor: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (c *Client) GetMonitor(id string) (*Monitor, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get monitor: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil // Monitor not found
@@ -85,7 +85,7 @@ func (c *Client) UpdateMonitor(id string, req UpdateMonitorRequest) (*Monitor, e
 	if err != nil {
 		return nil, fmt.Errorf("failed to update monitor: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (c *Client) DeleteMonitor(id string) error {
 	if err != nil {
 		return fmt.Errorf("failed to delete monitor: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil // Monitor already doesn't exist
@@ -138,7 +138,7 @@ func (c *Client) ListMonitors() ([]Monitor, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to list monitors: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return nil, err

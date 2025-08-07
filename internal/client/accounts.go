@@ -11,7 +11,7 @@ func (c *Client) GetAccount() (*Account, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get account: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return nil, err

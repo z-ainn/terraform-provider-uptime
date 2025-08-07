@@ -401,16 +401,9 @@ func (r *ContactResource) validateOpsgenieResponder(ctx context.Context, respond
 	}
 
 	// Ensure at least one identifier is provided
-	hasIdentifier := false
-	if !responder.ID.IsNull() && responder.ID.ValueString() != "" {
-		hasIdentifier = true
-	}
-	if !responder.Name.IsNull() && responder.Name.ValueString() != "" {
-		hasIdentifier = true
-	}
-	if !responder.Username.IsNull() && responder.Username.ValueString() != "" {
-		hasIdentifier = true
-	}
+	hasIdentifier := (!responder.ID.IsNull() && responder.ID.ValueString() != "") ||
+		(!responder.Name.IsNull() && responder.Name.ValueString() != "") ||
+		(!responder.Username.IsNull() && responder.Username.ValueString() != "")
 
 	if !hasIdentifier {
 		resp.Diagnostics.AddError(

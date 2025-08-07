@@ -11,7 +11,7 @@ func (c *Client) CreateContact(req *CreateContactRequest) (*Contact, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create contact: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (c *Client) GetContact(id string) (*Contact, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get contact: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Handle 404 as nil (not found)
 	if resp.StatusCode == 404 {
@@ -64,7 +64,7 @@ func (c *Client) UpdateContact(id string, req *UpdateContactRequest) (*Contact, 
 	if err != nil {
 		return nil, fmt.Errorf("failed to update contact: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (c *Client) DeleteContact(id string) error {
 	if err != nil {
 		return fmt.Errorf("failed to delete contact: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return err
@@ -103,7 +103,7 @@ func (c *Client) ListContacts() ([]Contact, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to list contacts: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := c.checkResponse(resp); err != nil {
 		return nil, err
