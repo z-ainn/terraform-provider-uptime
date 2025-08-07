@@ -81,14 +81,14 @@ resource "uptime_monitor" "api_health" {
     expected_status_codes        = "200,201-204"
     check_certificate_expiration = true
     follow_redirects            = true
-    
+
     request_headers = {
       "Authorization" = "Bearer token"
       "Content-Type"  = "application/json"
     }
-    
+
     expected_response_body = "healthy"
-    
+
     expected_response_headers = {
       "Content-Type" = "application/json"
     }
@@ -156,7 +156,7 @@ When `type = "https"`, you can configure additional HTTPS-specific options:
 
 ### Requirements
 
-- Go 1.23+
+- Go 1.24+
 - Terraform 1.0+
 
 ### Building
@@ -203,7 +203,7 @@ This provider interfaces with your existing Uptime Monitor API endpoints:
 
 - `POST /api/monitors` - Create monitor
 - `GET /api/monitors/{id}` - Get monitor
-- `PUT /api/monitors/{id}` - Update monitor  
+- `PUT /api/monitors/{id}` - Update monitor
 - `DELETE /api/monitors/{id}` - Delete monitor
 - `GET /api/monitors` - List monitors
 
