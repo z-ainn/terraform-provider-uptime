@@ -159,18 +159,6 @@ dist: clean ## Build for all platforms
 	done
 	@echo "${GREEN}✓${NC} Built for all platforms"
 
-##@ Git Hooks
-
-.PHONY: install-hooks
-install-hooks: ## Install git hooks
-	@git config core.hooksPath .githooks
-	@echo "${GREEN}✓${NC} Git hooks installed"
-
-.PHONY: uninstall-hooks
-uninstall-hooks: ## Uninstall git hooks
-	@git config --unset core.hooksPath
-	@echo "${GREEN}✓${NC} Git hooks uninstalled"
-
 ##@ Dependencies
 
 .PHONY: deps

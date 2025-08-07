@@ -51,29 +51,6 @@ For acceptance tests, set these environment variables:
 - `UPTIME_API_KEY` - Your Uptime Monitor API key
 - `UPTIME_BASE_URL` - The API base URL (defaults to https://api.uptime-monitor.io)
 
-## Git Hooks
-
-The `.githooks/` directory contains Git hooks that can be installed to run validation automatically.
-
-### Installing Hooks
-
-```bash
-# Install git hooks
-make install-hooks
-
-# Uninstall git hooks
-make uninstall-hooks
-```
-
-### Available Hooks
-
-- **pre-push** - Runs `validate.sh` before allowing push to remote
-
-To bypass hooks temporarily (not recommended):
-```bash
-git push --no-verify
-```
-
 ## Quick Commands
 
 Use the Makefile for common tasks:
