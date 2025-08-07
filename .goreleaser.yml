@@ -48,6 +48,7 @@ signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
+    skip: '{{ empty .Env.GPG_FINGERPRINT }}'
 
 release:
   github:
