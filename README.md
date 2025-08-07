@@ -1,8 +1,8 @@
 # Terraform Provider for Uptime Monitor
 
-[![CI](https://github.com/codematters-llc/terraform-provider-uptime/actions/workflows/ci.yml/badge.svg)](https://github.com/codematters-llc/terraform-provider-uptime/actions/workflows/ci.yml)
-[![Release](https://github.com/codematters-llc/terraform-provider-uptime/actions/workflows/release.yml/badge.svg)](https://github.com/codematters-llc/terraform-provider-uptime/actions/workflows/release.yml)
-[![License](https://img.shields.io/github/license/codematters-llc/terraform-provider-uptime)](https://github.com/codematters-llc/terraform-provider-uptime/blob/main/LICENSE)
+[![CI](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/ci.yml/badge.svg)](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/ci.yml)
+[![Release](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/release.yml/badge.svg)](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/release.yml)
+[![License](https://img.shields.io/github/license/uptime-monitor-io/terraform-provider-uptime)](https://github.com/uptime-monitor-io/terraform-provider-uptime/blob/main/LICENSE)
 
 A Terraform provider for managing uptime monitors through the Uptime Monitor API.
 

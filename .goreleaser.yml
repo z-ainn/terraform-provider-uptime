@@ -110,8 +110,8 @@ changelog:
 # Docker builds disabled - not needed for Terraform Registry
 # dockers:
 #   - image_templates:
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-amd64"
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-amd64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:{{ .Version }}-amd64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:latest-amd64"
 #     use: buildx
 #     build_flag_templates:
 #       - "--platform=linux/amd64"
@@ -121,8 +121,8 @@ changelog:
 #       - "--label=org.opencontainers.image.version={{ .Version }}"
 #   
 #   - image_templates:
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-arm64"
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-arm64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:{{ .Version }}-arm64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:latest-arm64"
 #     use: buildx
 #     build_flag_templates:
 #       - "--platform=linux/arm64"
@@ -132,12 +132,12 @@ changelog:
 #       - "--label=org.opencontainers.image.version={{ .Version }}"
 
 # docker_manifests:
-#   - name_template: "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}"
+#   - name_template: "ghcr.io/uptime-monitor-io/terraform-provider-uptime:{{ .Version }}"
 #     image_templates:
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-amd64"
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:{{ .Version }}-arm64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:{{ .Version }}-amd64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:{{ .Version }}-arm64"
 #   
-#   - name_template: "ghcr.io/codematters-llc/terraform-provider-uptime:latest"
+#   - name_template: "ghcr.io/uptime-monitor-io/terraform-provider-uptime:latest"
 #     image_templates:
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-amd64"
-#       - "ghcr.io/codematters-llc/terraform-provider-uptime:latest-arm64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:latest-amd64"
+#       - "ghcr.io/uptime-monitor-io/terraform-provider-uptime:latest-arm64"
