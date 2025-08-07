@@ -1,0 +1,9 @@
+provider_name: uptime
+provider_short_description: "Terraform provider for Uptime Monitor service"
+provider_description: |
+  The Uptime provider allows Terraform to manage resources in Uptime Monitor service.
+  
+  Use the navigation to the left to read about the available resources and data sources.
+ignore_deprecated: true
+tf_path: ""
+registry: "registry.terraform.io/uptime-monitor/uptime"

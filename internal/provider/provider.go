@@ -40,6 +40,7 @@ func (p *UptimeProvider) Metadata(ctx context.Context, req provider.MetadataRequ
 
 func (p *UptimeProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		MarkdownDescription: "The Uptime Monitor provider allows you to manage monitors, contacts, and status pages for the Uptime Monitor service.",
 		Attributes: map[string]schema.Attribute{
 			"api_key": schema.StringAttribute{
 				MarkdownDescription: "API key for authenticating with the Uptime Monitor service. Can also be set via the UPTIME_API_KEY environment variable.",
