@@ -28,6 +28,12 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.5.7'
+          terraform_wrapper: false
+
       - name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
