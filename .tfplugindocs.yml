@@ -6,4 +6,4 @@ provider_description: |
   Use the navigation to the left to read about the available resources and data sources.
 ignore_deprecated: true
 tf_path: ""
-registry: "registry.terraform.io/uptime-monitor/uptime"
+registry: "registry.terraform.io/codematters-llc/uptime"

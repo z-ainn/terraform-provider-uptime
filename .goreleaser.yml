@@ -52,7 +52,7 @@ signs:
 release:
   github:
     owner: codematters-llc
-    name: uptime-monitor-io-terraform-provider
+    name: terraform-provider-uptime
   draft: false
   prerelease: auto
   name_template: "v{{ .Version }}"
